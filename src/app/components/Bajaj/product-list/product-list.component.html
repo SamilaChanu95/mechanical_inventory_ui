@@ -1,0 +1,28 @@
+<div class="container my-5">
+    <h1 class="mb-3">Bajaj Products</h1>
+    <div class="card">
+        <table class="table" *ngIf="productList && productList.length > 0">
+            <thead>
+                <tr>
+                    <th>Bajaj Code</th>
+                    <th>Product</th>
+                    <th>Manufac. Year</th>
+                    <th>Available Quantity</th>
+                    <th>Quality</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of productList; trackBy: trackById">
+                    <td>{{item.bajajCode}}</td>
+                    <td>{{item.productName}}</td>
+                    <td>{{item.manufacturerYear | date : 'yyyy'}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.qualityLevel}}</td>
+                    <td>{{item.sellingPrice | number : '1.2-2'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p *ngIf="!productList || productList.length == 0">No Any Products</p>
+    </div>
+</div>
