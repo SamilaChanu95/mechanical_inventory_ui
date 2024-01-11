@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Product } from '../../../model/product';
 import { ProductService } from '../../../services/product-service';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
@@ -80,5 +80,25 @@ export class ProductViewComponent implements OnInit {
     this._product.getProduct(id).subscribe((resp : Product) => {
       this.bajajProduct = resp;
     });
+  }
+
+  updateProduct(bajajProduct: Product): void {
+    this._product.updateProduct(bajajProduct).subscribe((response: boolean) => {
+      if (response) {
+        console.log('Done Update');
+      } else {
+        console.log('Un-done Update');
+      }
+    })
+  }
+
+  addProduct(bajajProduct: Product): void {
+    this._product.addProduct(bajajProduct).subscribe((response: boolean) => {
+      if (response) {
+        console.log('Done Addition');
+      } else {
+        console.log('Un-done Addition');
+      }
+    })
   }
 }
