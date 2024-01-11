@@ -3,20 +3,21 @@ import { ProductService } from '../../../services/product-service';
 import { Product } from '../../../model/product';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule, NgFor, NgForOf, NgForOfContext, NgIf, NgIfContext } from '@angular/common';
+import { CommonModule, NgFor, NgForOf, NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [HttpClientModule, NgFor, NgForOf, CommonModule, NgIf],
-  providers: [ProductService],
+  providers: [ProductService, Router],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
 export class ProductListComponent implements OnInit, OnDestroy{
   productList: Product[] = [];
   unsubscribe: Subject<void> = new Subject<void>();
-  constructor (private _productService: ProductService) {}
+  constructor (private _productService: ProductService, private _router: Router) {}
 
   ngOnInit() : void 
   {
@@ -27,6 +28,15 @@ export class ProductListComponent implements OnInit, OnDestroy{
   {
     this.unsubscribe.next();
     this.unsubscribe.complete();    
+  }
+
+  public open(event : Event, item: any): void {
+    console.log("function called :", item);
+    this._router.navigateByUrl(`/bajaj/${item.id}`);
+  }
+
+  addProduct(event : Event) : void {
+    this._router.navigateByUrl('bajaj/0');
   }
 
   getProductList(): void {

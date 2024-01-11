@@ -16,4 +16,8 @@ export class ProductService {
     public getProductList(): Observable<any> {
         return this._http.get(`${this.url}/api/BajajProduct/get-products-list`);
     }
+
+    public getProduct(id: number): Observable<any> {
+        return this._http.get(`${this.url}/api/BajajProduct/get-product/${id}`);
+    }
 }

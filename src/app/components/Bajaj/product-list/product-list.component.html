@@ -1,6 +1,11 @@
 <div class="container my-5">
-    <h1 class="mb-3">Bajaj Products</h1>
-    <div class="card">
+    <div class="container d-flex justify-content-between px-0">
+        <h1 class="mb-3">Bajaj Products</h1>
+        <div class="d-flex mh-4 align-items-center">
+            <button type="button" class="btn btn-outline-info" (click)="addProduct($event)">Add Product</button>
+        </div>
+    </div>
+    <div class="shadow p-3 mb-5 bg-white rounded">
         <table class="table" *ngIf="productList && productList.length > 0">
             <thead>
                 <tr>
@@ -10,6 +15,7 @@
                     <th>Available Quantity</th>
                     <th>Quality</th>
                     <th>Price</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +26,7 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.qualityLevel}}</td>
                     <td>{{item.sellingPrice | number : '1.2-2'}}</td>
+                    <td><button class="btn btn-outline-info rounded shadow-sm" (click)="open($event, item)">View</button></td>
                 </tr>
             </tbody>
         </table>
