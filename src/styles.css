@@ -1,1 +1,35 @@
-/* You can add global styles to this file, and also import other style files */
+.success-message {
+    div:nth-child(1) {
+        background-color: green !important;
+        border-radius: 7px !important;
+    }
+
+    .mat-mdc-snack-bar-action:hover {
+        color: white !important;
+        .mdc-button__label {
+            color: black !important;
+        }
+    }
+
+    /* .mat-mdc-snack-bar-action:hover .mdc-button__label:hover {
+        color: black !important;
+    } */
+
+    /* button > span .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+        background-color: white !important; 
+    } */
+}
+
+.error-message {
+    div {
+        background-color: red !important;
+        border-radius: 7px !important;
+    }
+
+    .mat-mdc-snack-bar-action:hover {
+        color: white !important;
+        .mdc-button__label {
+            color: black !important;
+        }
+    }
+}

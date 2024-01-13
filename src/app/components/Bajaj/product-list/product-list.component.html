@@ -26,7 +26,7 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.qualityLevel}}</td>
                     <td>{{item.sellingPrice | number : '1.2-2'}}</td>
-                    <td><button class="btn btn-outline-info rounded shadow-sm" (click)="open($event, item)">View</button></td>
+                    <td><button class="btn btn-outline-info rounded shadow-sm" (click)="open($event, item)">View</button><button class="mx-1 btn btn-outline-danger rounded shadow-sm" (click)="deleteItem($event, item)">Delete</button></td>
                 </tr>
             </tbody>
         </table>

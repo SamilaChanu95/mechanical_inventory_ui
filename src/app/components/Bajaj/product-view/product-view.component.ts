@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule, Location } from '@angular/common';
-import { FormsModule, NgForm } from '@angular/forms';
+import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Product } from '../../../model/product';
 import { ProductService } from '../../../services/product-service';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
@@ -11,7 +11,8 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/
 import { MatInputModule } from '@angular/material/input';
 import * as _moment from 'moment';
 import { Moment } from 'moment';
-import { time } from 'console';
+import { SnackbarService } from '../../../services/snackbar.service';
+import { Subject, takeUntil } from 'rxjs';
 
 const moment = _moment;
 
@@ -31,7 +32,7 @@ export const MY_FORMATS = {
   selector: 'app-product-view',
   standalone: true,
   imports: [FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule],
-  providers: [Location, Router, ProductService, {
+  providers: [Location, Router, SnackbarService, ProductService, {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
@@ -45,10 +46,11 @@ export const MY_FORMATS = {
   animations: []
 })
 
-export class ProductViewComponent implements OnInit {
+export class ProductViewComponent implements OnInit, OnDestroy {
+  unsubscribe: Subject<void> = new Subject<void> ();
   bajajProduct: Product = new Product();
   productId: number = 0;
-  constructor(private _location: Location, private _router: Router, private _route: ActivatedRoute, private _product: ProductService) {}
+  constructor(private _location: Location, private _router: Router, private _route: ActivatedRoute, private _product: ProductService, private _snackBarService: SnackbarService) {}
   @ViewChild('picker', { static: false }) private picker!: MatDatepicker<Date>;
 
 
@@ -59,6 +61,11 @@ export class ProductViewComponent implements OnInit {
     this.getProductDetails(this.productId);
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   goBack(event: Event) : void {
     if (window.history.length > 1) {
       this._location.back();
@@ -67,38 +74,41 @@ export class ProductViewComponent implements OnInit {
     }
   }
 
+  // This is for mat-date-picker for select year and stop the future process hold with yearSelected() event
   chosenYearHandler(normalizedYear: Moment, datepicker: MatDatepicker<Moment>){
     // let { _d } = event;
     var selectedYear = normalizedYear.year();
-    console.log('selected Year', selectedYear);
     this.bajajProduct.manufacturerYear = new Date(selectedYear, 0, 1);
-    //datepicker.close();
+    // datepicker.close();
     this.picker.close();
   }
 
   getProductDetails(id: number): void {
-    this._product.getProduct(id).subscribe((resp : Product) => {
+    this._product.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((resp : Product) => {
       this.bajajProduct = resp;
     });
   }
 
   updateProduct(bajajProduct: Product): void {
-    this._product.updateProduct(bajajProduct).subscribe((response: boolean) => {
+    this._product.updateProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
-        console.log('Done Update');
+        this._snackBarService.getSuccessMessage('Product updated successfully.');
+        this._router.navigateByUrl('bajaj');
       } else {
-        console.log('Un-done Update');
+        this._snackBarService.getErrorMessage('Error in product update.');
       }
     })
   }
 
   addProduct(bajajProduct: Product): void {
-    this._product.addProduct(bajajProduct).subscribe((response: boolean) => {
+    this._product.addProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
-        console.log('Done Addition');
+        this._snackBarService.getSuccessMessage('Product added successfully.');
+        this._router.navigateByUrl('bajaj');
       } else {
-        console.log('Un-done Addition');
+        this._snackBarService.getErrorMessage('Error in product add.');
       }
     })
   }
+
 }
