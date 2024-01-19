@@ -26,10 +26,13 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.qualityLevel}}</td>
                     <td>{{item.sellingPrice | number : '1.2-2'}}</td>
-                    <td><button class="btn btn-outline-info rounded shadow-sm" (click)="open($event, item)">View</button><button class="mx-1 btn btn-outline-danger rounded shadow-sm" (click)="deleteItem($event, item)">Delete</button></td>
+                    <td><button class="btn btn-outline-info rounded shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Product" (click)="open($event, item)"><i class="fa-solid fa-eye"></i></button>
+                        <button class="mx-1 btn btn-outline-danger rounded shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Product" (click)="deleteItem($event, item)"><i class="fa-solid fa-trash"></i></button></td>
                 </tr>
             </tbody>
         </table>
         <p *ngIf="!productList || productList.length == 0">No Any Products</p>
     </div>
 </div>
+
+<router-outlet></router-outlet>

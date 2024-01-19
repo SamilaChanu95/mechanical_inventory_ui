@@ -4,13 +4,13 @@ import { Product } from '../../../model/product';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule, NgFor, NgForOf, NgIf } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [HttpClientModule, NgFor, NgForOf, CommonModule, NgIf],
+  imports: [HttpClientModule, NgFor, NgForOf, CommonModule, NgIf, RouterOutlet],
   providers: [ProductService, Router, SnackbarService],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'

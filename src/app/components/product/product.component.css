@@ -1,0 +1,15 @@
+.product_image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+
+.underline-none {
+    text-decoration: none;
+}
+
+.product-card {
+    width: 18rem;
+    cursor: pointer;
+}
