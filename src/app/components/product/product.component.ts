@@ -16,16 +16,8 @@ export class ProductComponent implements OnInit {
   ngOnInit(): void {
     // this._route.url.subscribe(m =>console.log(m[0].path)); // this logs "detail"
   }
-  
-  navigateToBajaj(event: Event): void {
-    this._router.navigateByUrl('/bajaj');
-  }
 
-  navigateToTVS(event : Event): void {
-    this._router.navigateByUrl('/tvs');
-  }
-
-  navigateToHero(event : Event): void {
-    this._router.navigateByUrl('/hero');
+  navigateToPage(event: Event, url: string): void {
+    this._router.navigateByUrl(`${url}`);
   }
 }
