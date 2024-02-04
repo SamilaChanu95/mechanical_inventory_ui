@@ -36,14 +36,14 @@ export class ProductListComponent implements OnInit, OnDestroy{
   }
 
   addProduct(event : Event) : void {
-    this._router.navigateByUrl('bajaj/0');
+    this._router.navigateByUrl('/bajaj/0');
   }
 
   deleteItem(event: Event, item: Product):void {
     this._productService.deleteProduct(item.id).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackBarService.getSuccessMessage('Product deleted successfully.');
-        this._router.navigateByUrl('bajaj');
+        this._router.navigateByUrl('/bajaj');
       } else {
         this._snackBarService.getErrorMessage('Error in product delete.');
       }

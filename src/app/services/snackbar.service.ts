@@ -10,13 +10,15 @@ export class SnackbarService {
 
   public getSuccessMessage(message: string): void {
     this._snackBar.open(message, 'Close', {
-      panelClass: ['success-message', 'position-absolute']
+      panelClass: ['success-message', 'position-absolute'],
+      duration: 3000
     });
   }
 
   public getErrorMessage(message: string): void {
     this._snackBar.open(message, 'Close', {
-      panelClass: ['error-message', 'position-absolute']
+      panelClass: ['error-message', 'position-absolute'],
+      duration: 3000
     })
   }
 }

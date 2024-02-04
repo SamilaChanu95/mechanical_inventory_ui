@@ -1,5 +1,5 @@
 <div class="container my-5">
-    <div class="container d-flex justify-content-between px-0">
+    <div class="d-flex justify-content-between px-0">
         <h1 class="mb-3">{{productId == 0? 'Add' : 'Edit'}} Product</h1>
         <div class="d-flex mh-4 align-items-center">
             <button type="button" class="btn btn-outline-info" (click)="goBack($event)">Go Back</button>
@@ -10,7 +10,7 @@
             <form #form="ngForm" class="col-12" (ngSubmit)="productId == 0 ? addProduct(bajajProduct) : updateProduct(bajajProduct)">
                 <div class="form-group">
                     <label for="code">Bajaj Code</label>
-                    <input type="text" class="form-control" id="code" aria-describedby="codeFeildHelp" placeholder="Enter Bajaj Code" name="bajajCode" [(ngModel)]="bajajProduct.bajajCode">
+                    <input type="text" class="form-control" id="code" aria-describedby="codeFeildHelp" placeholder="Enter Bajaj Code" name="productCode" [(ngModel)]="bajajProduct.productCode">
                     <small id="codeFeildHelp" class="form-text text-muted sr-only">Add the particular bajaj code and it should match with standard bajaj code.</small>
                 </div>
                 <div class="form-group">
