@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { Product } from '../../../model/product';
 import { TvsService } from '../../../services/tvs.service';
 import { SnackbarService } from '../../../services/snackbar.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-tvs-product-view',
@@ -17,14 +18,15 @@ import { SnackbarService } from '../../../services/snackbar.service';
   templateUrl: './tvs-product-view.component.html',
   styleUrl: './tvs-product-view.component.css'
 })
-export class TvsProductViewComponent implements OnInit{
+export class TvsProductViewComponent implements OnInit, OnDestroy{
   productId: number = 0;
   tvsProduct: Product = new Product();
+  unsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _location: Location, private _router:Router, private _route:ActivatedRoute, private _tvsService:TvsService, private _snackbar:SnackbarService) {}
   
   ngOnInit(): void {
-    this._route.paramMap.subscribe((resp) => {
+    this._route.paramMap.pipe(takeUntil(this.unsubscribe)).subscribe((resp: any) => {
       if (resp) {
         this.productId = Number(resp.get('id'));
       }
@@ -32,7 +34,12 @@ export class TvsProductViewComponent implements OnInit{
     this.getProduct(this.productId);
   }
 
-  goBack(event: Event) : void {
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  goBack(event: Event): void {
     if (window.history.length > 1) {
       this._location.back();
     } else {
@@ -40,16 +47,16 @@ export class TvsProductViewComponent implements OnInit{
     }
   }
 
-  getProduct(id: number) :any {
-    this._tvsService.getProduct(id).subscribe((response) => {
+  getProduct(id: number): any {
+    this._tvsService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((response: Product) => {
       if (response) {
         this.tvsProduct = response;
       }
     });
   }
 
-  updateProduct(tvsProduct: Product) {
-    this._tvsService.updateProduct(tvsProduct).subscribe((response: boolean) => {
+  updateProduct(tvsProduct: Product): void {
+    this._tvsService.updateProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackbar.getSuccessMessage('Product updated successfully.');
         this._router.navigateByUrl('/tvs');
@@ -59,8 +66,8 @@ export class TvsProductViewComponent implements OnInit{
     })
   }
 
-  addProduct(tvsProduct: Product) {
-    this._tvsService.addProduct(tvsProduct).subscribe((response: boolean) => {
+  addProduct(tvsProduct: Product): void {
+    this._tvsService.addProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackbar.getSuccessMessage('Product added successfully.');
         this._router.navigateByUrl('/tvs');
@@ -69,5 +76,4 @@ export class TvsProductViewComponent implements OnInit{
       }
     })
   }
-
 }

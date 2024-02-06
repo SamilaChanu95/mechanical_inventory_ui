@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Product } from '../../../model/product';
 import { HeroService } from '../../../services/hero.service';
 import { SnackbarService } from '../../../services/snackbar.service';
@@ -8,6 +8,7 @@ import { CommonModule, Location } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-hero-product-view',
@@ -17,14 +18,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   templateUrl: './hero-product-view.component.html',
   styleUrl: './hero-product-view.component.css'
 })
-export class HeroProductViewComponent implements OnInit {
+export class HeroProductViewComponent implements OnInit, OnDestroy {
   productId: number = 0;
   heroProduct: Product = new Product();
+  unsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _heroService: HeroService, private _snackbarService: SnackbarService, private _location: Location, private _router: Router, private _route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this._route.paramMap.subscribe((res) => {
+    this._route.paramMap.pipe(takeUntil(this.unsubscribe)).subscribe((res: any) => {
       if (res) {
         this.productId = Number(res.get('id'));
       }
@@ -32,8 +34,13 @@ export class HeroProductViewComponent implements OnInit {
     this.getProduct(this.productId);
   }
 
-  addProduct(item: Product) {
-    this._heroService.addProduct(item).subscribe((res) => {
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  addProduct(item: Product): void {
+    this._heroService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
       if (res) {
         this._snackbarService.getSuccessMessage('Product added successfully.');
         this._router.navigateByUrl('/hero');
@@ -43,8 +50,8 @@ export class HeroProductViewComponent implements OnInit {
     });
   }
 
-  updateProduct(item: Product) {
-    this._heroService.updateProduct(item).subscribe((response) => {
+  updateProduct(item: Product): void {
+    this._heroService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackbarService.getSuccessMessage('Product updated successfully.');
         this._router.navigateByUrl('/hero');
@@ -54,8 +61,8 @@ export class HeroProductViewComponent implements OnInit {
     });
   }
 
-  getProduct(id: number) {
-    this._heroService.getProduct(id).subscribe((res) => {
+  getProduct(id: number): void {
+    this._heroService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
       if (res) {
         this.heroProduct = res;
       }

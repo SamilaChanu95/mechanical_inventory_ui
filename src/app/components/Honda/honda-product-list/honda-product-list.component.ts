@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Product } from '../../../model/product';
 import { HondaService } from '../../../services/honda.service';
 import { SnackbarService } from '../../../services/snackbar.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-honda-product-list',
@@ -13,8 +14,9 @@ import { SnackbarService } from '../../../services/snackbar.service';
   templateUrl: './honda-product-list.component.html',
   styleUrl: './honda-product-list.component.css'
 })
-export class HondaProductListComponent implements OnInit {
+export class HondaProductListComponent implements OnInit, OnDestroy {
   productList: Product [] = [];
+  unsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _router: Router, private _hondaService:HondaService, private _snackbarService:SnackbarService) {}
 
@@ -22,24 +24,29 @@ export class HondaProductListComponent implements OnInit {
     this.getProductList();
   }
 
-  getProductList():any {
-    this._hondaService.getProductList().subscribe((resp: Product[]) => {
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  getProductList(): void {
+    this._hondaService.getProductList().pipe(takeUntil(this.unsubscribe)).subscribe((resp: Product[]) => {
       if (resp) {
         this.productList = resp;
       }
     });
   }
 
-  addProduct(event : MouseEvent) : void {
+  addProduct(event : MouseEvent): void {
     this._router.navigateByUrl('/honda/0');
   }
 
-  openItem(event: MouseEvent, item: Product) {
+  openItem(event: MouseEvent, item: Product): void {
     this._router.navigateByUrl(`/honda/${item.id}`);
   }
 
-  deleteItem(event: MouseEvent, item: Product) {
-    this._hondaService.deleteProduct(item.id).subscribe((response: boolean) => {
+  deleteItem(event: MouseEvent, item: Product): void {
+    this._hondaService.deleteProduct(item.id).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackbarService.getSuccessMessage('Product deleted successfully.');
         this.getProductList();

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { Product } from '../../../model/product';
 import { DemarkService } from '../../../services/demark.service';
 import { SnackbarService } from '../../../services/snackbar.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-demark-product-list',
@@ -14,8 +15,9 @@ import { SnackbarService } from '../../../services/snackbar.service';
   styleUrl: './demark-product-list.component.css'
 })
 
-export class DemarkProductListComponent implements OnInit {
+export class DemarkProductListComponent implements OnInit, OnDestroy {
   productList: Product [] = [];
+  unsubscribe: Subject<void> = new Subject<void> ();
 
   constructor(private _router: Router, private _demark: DemarkService, private _snackBarService: SnackbarService) {}
   
@@ -23,8 +25,13 @@ export class DemarkProductListComponent implements OnInit {
     this.getProductList();
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   deleteItem($event: MouseEvent, item: Product): void {
-    this._demark.deleteProduct(item.id).subscribe((response: boolean) => {
+    this._demark.deleteProduct(item.id).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) 
       { 
         this._snackBarService.getSuccessMessage('Product deleted successfully.');
@@ -35,16 +42,16 @@ export class DemarkProductListComponent implements OnInit {
     });
   }
 
-  openItem($event: MouseEvent, item: Product) {
+  openItem($event: MouseEvent, item: Product): void {
     this._router.navigateByUrl(`/demark/${item.id}`);
   }
 
-  addProduct($event: MouseEvent) {
+  addProduct($event: MouseEvent): void {
     this._router.navigateByUrl(`/demark/0`);
   }
 
   getProductList(): void {
-    this._demark.getProductList().subscribe((response: Product[]) => {
+    this._demark.getProductList().pipe(takeUntil(this.unsubscribe)).subscribe((response: Product[]) => {
       if (response) {
         this.productList = response;
       }

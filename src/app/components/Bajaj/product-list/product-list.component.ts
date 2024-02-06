@@ -20,26 +20,26 @@ export class ProductListComponent implements OnInit, OnDestroy{
   unsubscribe: Subject<void> = new Subject<void>();
   constructor (private _productService: ProductService, private _router: Router, private _snackBarService:SnackbarService) {}
 
-  ngOnInit() : void 
+  ngOnInit(): void 
   {
     this.getProductList();
   }
 
-  ngOnDestroy() : void 
+  ngOnDestroy(): void 
   {
     this.unsubscribe.next();
     this.unsubscribe.complete();    
   }
 
-  public open(event : Event, item: any): void {
+  public open(event: Event, item: any): void {
     this._router.navigateByUrl(`/bajaj/${item.id}`);
   }
 
-  addProduct(event : Event) : void {
+  addProduct(event: Event): void {
     this._router.navigateByUrl('/bajaj/0');
   }
 
-  deleteItem(event: Event, item: Product):void {
+  deleteItem(event: Event, item: Product): void {
     this._productService.deleteProduct(item.id).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackBarService.getSuccessMessage('Product deleted successfully.');

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Product } from '../../../model/product';
 import { SnackbarService } from '../../../services/snackbar.service';
 import { DemarkService } from '../../../services/demark.service';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-demark-product-view',
@@ -17,14 +18,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   templateUrl: './demark-product-view.component.html',
   styleUrl: './demark-product-view.component.css'
 })
-export class DemarkProductViewComponent implements OnInit{
+export class DemarkProductViewComponent implements OnInit, OnDestroy{
   demarkProduct: Product = new Product();
   productId: number = 0;
+  unsubscribe: Subject<void> = new Subject<void> ();
 
   constructor(private _snackBarService: SnackbarService, private _demarkService:DemarkService, private _route: ActivatedRoute, private _router: Router, private _location: Location) {}
 
   ngOnInit(): void {
-    this._route.paramMap.subscribe((response) => {
+    this._route.paramMap.pipe(takeUntil(this.unsubscribe)).subscribe((response: any) => {
       if (response) {
         this.productId = Number(response.get('id'));
       }
@@ -32,8 +34,13 @@ export class DemarkProductViewComponent implements OnInit{
     this.getProduct(this.productId);
   }
 
-  addProduct(item: Product) {
-    this._demarkService.addProduct(item).subscribe((res) => {
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  addProduct(item: Product): void {
+    this._demarkService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
       if (res) {
         this._snackBarService.getSuccessMessage('Product added successfully.');
         this._router.navigateByUrl('/demark');
@@ -43,8 +50,8 @@ export class DemarkProductViewComponent implements OnInit{
     });
   }
 
-  updateProduct(item: Product) {
-    this._demarkService.updateProduct(item).subscribe((response) => {
+  updateProduct(item: Product): void {
+    this._demarkService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackBarService.getSuccessMessage('Product updated successfully.');
         this._router.navigateByUrl('/demark');
@@ -54,8 +61,8 @@ export class DemarkProductViewComponent implements OnInit{
     });
   }
 
-  getProduct(id: number) {
-    this._demarkService.getProduct(id).subscribe((res) => {
+  getProduct(id: number): void {
+    this._demarkService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
       if (res) {
         this.demarkProduct = res;
       }

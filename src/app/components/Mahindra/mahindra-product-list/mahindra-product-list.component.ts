@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { SnackbarService } from '../../../services/snackbar.service';
 import { MahindraService } from '../../../services/mahindra.service';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../../model/product';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-mahindra-product-list',
@@ -13,8 +14,9 @@ import { Product } from '../../../model/product';
   templateUrl: './mahindra-product-list.component.html',
   styleUrl: './mahindra-product-list.component.css'
 })
-export class MahindraProductListComponent {
+export class MahindraProductListComponent implements OnInit, OnDestroy {
   productList: Product [] = [];  
+  unsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _router: Router, private _mahindraService: MahindraService, private _snackBarService: SnackbarService) {}
   
@@ -22,17 +24,21 @@ export class MahindraProductListComponent {
     this.getProductList();
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+  
   getProductList(): void {
-    this._mahindraService.getProductList().subscribe((res: Product[]) => {
-      if (res) 
-      {
+    this._mahindraService.getProductList().pipe(takeUntil(this.unsubscribe)).subscribe((res: Product[]) => {
+      if (res) {
         this.productList = res;
       }
     });
   }
 
-  deleteItem($event: MouseEvent, item: Product) {
-    this._mahindraService.deleteProduct(item.id).subscribe((response: boolean) => {
+  deleteItem($event: MouseEvent, item: Product):void {
+    this._mahindraService.deleteProduct(item.id).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) 
       { 
         this._snackBarService.getSuccessMessage('Product deleted successfully.');
@@ -43,11 +49,11 @@ export class MahindraProductListComponent {
     }); 
   }
 
-  openItem($event: MouseEvent, item: Product) {
+  openItem($event: MouseEvent, item: Product): void {
     this._router.navigateByUrl(`/mahindra/${item.id}`);
   }
 
-  addProduct($event: MouseEvent) {
+  addProduct($event: MouseEvent): void {
     this._router.navigateByUrl(`/mahindra/0`);
   }
 

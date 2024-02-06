@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,6 +8,7 @@ import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
 import { Product } from '../../../model/product';
 import { SnackbarService } from '../../../services/snackbar.service';
 import { MahindraService } from '../../../services/mahindra.service';
+import { Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-mahindra-product-view',
@@ -17,14 +18,15 @@ import { MahindraService } from '../../../services/mahindra.service';
   templateUrl: './mahindra-product-view.component.html',
   styleUrl: './mahindra-product-view.component.css'
 })
-export class MahindraProductViewComponent implements OnInit{
+export class MahindraProductViewComponent implements OnInit, OnDestroy{
   mahindraProduct: Product = new Product();
   productId: number = 0;
+  unsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _snackbarService:SnackbarService, private _mahindraService:MahindraService, private _location:Location, private _route:ActivatedRoute, private _router:Router) {}
 
   ngOnInit(): void {
-    this._route.paramMap.subscribe((response) => {
+    this._route.paramMap.pipe(takeUntil(this.unsubscribe)).subscribe((response: any) => {
       if (response) {
         this.productId = Number(response.get('id'));
       }
@@ -32,16 +34,21 @@ export class MahindraProductViewComponent implements OnInit{
     this.getProduct(this.productId);
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   getProduct(id: number): void {
-    this._mahindraService.getProduct(id).subscribe((res) => {
+    this._mahindraService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
       if (res) {
         this.mahindraProduct = res;
       }
     });
   }
 
-  addProduct(item: Product) {
-    this._mahindraService.addProduct(item).subscribe((res) => {
+  addProduct(item: Product): void {
+    this._mahindraService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
       if (res) {
         this._snackbarService.getSuccessMessage('Product added successfully.');
         this._router.navigateByUrl('/mahindra');
@@ -51,8 +58,8 @@ export class MahindraProductViewComponent implements OnInit{
     });
   }
 
-  updateProduct(item: Product) {
-    this._mahindraService.updateProduct(item).subscribe((response) => {
+  updateProduct(item: Product): void {
+    this._mahindraService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
       if (response) {
         this._snackbarService.getSuccessMessage('Product updated successfully.');
         this._router.navigateByUrl('/mahindra');
@@ -62,7 +69,7 @@ export class MahindraProductViewComponent implements OnInit{
     });
   }
 
-  goBack($event: MouseEvent) {
+  goBack($event: MouseEvent): void {
     if(window.history.length > 1) {
       this._location.back();
     } else {
