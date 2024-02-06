@@ -1,3 +1,51 @@
-<p>hero-product-list works!</p>
+<div class="container my-5">
+    <div class="d-flex justify-content-between px-0">
+        <div class="d-flex">
+            <h1 class="mb-3">Hero Products</h1>
+        </div>
+        <div class="d-flex mh-4 align-items-center">
+            <button type="button" class="btn btn-outline-info" (click)="addProduct($event)">Add Product</button>
+        </div>
+    </div>
+    <div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <table class="table">
+                <table class="table" *ngIf="productList && productList.length > 0"></table>
+                <thead>
+                    <tr>
+                        <th>Hero Code</th>
+                        <th>Product</th>
+                        <th>Manufac. Year</th>
+                        <th>Available Quantity</th>
+                        <th>Quality</th>
+                        <th>Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of productList; trackBy: trackById">
+                        <td>{{item.productCode}}</td>
+                        <td>{{item.productName}}</td>
+                        <td>{{item.manufacturerYear | date : "yyyy"}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td>{{item.qualityLevel}}</td>
+                        <td>{{item.sellingPrice | number : '1.2-2'}}</td>
+                        <td>
+                            <div class="d-flex">
+                                <div>
+                                    <button class="btn btn-outline-info rounded shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Product" (click)="openItem($event, item)"><i class="fa-solid fa-eye"></i></button>
+                                </div>
+                                <div>
+                                    <button class="mx-1 btn btn-outline-danger rounded shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Product" (click)="deleteItem($event, item)"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p *ngIf="!productList || productList.length == 0">No Any Products</p>
+        </div>
+    </div>
+</div>
 
 <router-outlet></router-outlet>

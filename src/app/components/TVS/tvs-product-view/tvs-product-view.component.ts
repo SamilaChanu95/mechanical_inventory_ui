@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +12,7 @@ import { SnackbarService } from '../../../services/snackbar.service';
 @Component({
   selector: 'app-tvs-product-view',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule],
+  imports: [RouterOutlet, FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, CommonModule],
   providers: [Router, Location, SnackbarService, TvsService],
   templateUrl: './tvs-product-view.component.html',
   styleUrl: './tvs-product-view.component.css'
@@ -36,7 +36,7 @@ export class TvsProductViewComponent implements OnInit{
     if (window.history.length > 1) {
       this._location.back();
     } else {
-      this._router.navigate(['/bajaj'])
+      this._router.navigate(['/tvs'])
     }
   }
 

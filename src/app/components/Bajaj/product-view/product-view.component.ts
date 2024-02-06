@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../../../model/product';
 import { ProductService } from '../../../services/product-service';
@@ -31,7 +31,7 @@ export const MY_FORMATS = {
 @Component({
   selector: 'app-product-view',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, CommonModule, RouterOutlet],
   providers: [Location, Router, SnackbarService, ProductService, {
       provide: DateAdapter,
       useClass: MomentDateAdapter,

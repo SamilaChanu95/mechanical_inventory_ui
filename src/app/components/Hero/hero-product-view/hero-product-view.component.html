@@ -1,1 +1,54 @@
-<p>hero-product-view works!</p>
+<div class="container my-5">
+    <div class="d-flex justify-content-between px-0">
+        <div>
+            <h1 class="mb-3">{{productId == 0? 'Add' : 'Edit'}} Product</h1>
+        </div>
+        <div class="d-flex mh-4 align-items-center">
+            <button type="button" class="btn btn-outline-info" (click)="goBack($event)">Go Back</button>
+        </div>
+    </div>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <div class="d-flex col-12">
+            <form #form="ngForm" class="col-12" (ngSubmit)="productId == 0 ? addProduct(heroProduct) : updateProduct(heroProduct)">
+                <div class="form-group">
+                    <label for="code">Hero Code</label>
+                    <input type="text" class="form-control" id="code" aria-describedby="codeFeildHelp" placeholder="Enter Hero Code" name="productCode" [(ngModel)]="heroProduct.productCode">
+                    <small id="codeFeildHelp" class="form-text text-muted sr-only">Add the particular demark code and it should match with standard demark code.</small>
+                </div>
+                <div class="form-group">
+                    <label for="product">Product</label>
+                    <input type="text" class="form-control" id="product" aria-describedby="productFeildHelp" placeholder="Enter Product Name" name="productName" [(ngModel)]="heroProduct.productName">
+                    <small id="productFeildHelp" class="form-text text-muted sr-only">Add the particular demark product name.</small>
+                </div>
+                <div class="form-group">
+                    <label for="mYear">Manufac. Year</label>
+                    <input type="datetime-local" class="form-control" id="mYear" aria-describedby="manufacFeildHelp" placeholder="Enter Manufacturer Year" name="manufacturerYear" [(ngModel)]="heroProduct.manufacturerYear">
+                    <small id="manufacFeildHelp" class="form-text text-muted sr-only">Add the manufacture year of the product.</small>
+                </div>
+                <div class="form-group">
+                    <label for="qty">Quantity</label>
+                    <input type="number" class="form-control" id="qty" step="1" aria-describedby="quantityFeildHelp" placeholder="Enter Quantity" name="quantity" [(ngModel)]="heroProduct.quantity">
+                    <small id="quantityFeildHelp" class="form-text text-muted sr-only">Add the quantity product.</small>
+                </div>
+                <div class="form-group">
+                    <label for="qlityLevel">Quality Level</label>
+                    <input type="number" class="form-control" id="qlityLevel" step="1" aria-describedby="qualityFeildHelp" placeholder="Enter Quality Level" name="qualityLevel" [(ngModel)]="heroProduct.qualityLevel">
+                    <small id="qualityFeildHelp" class="form-text text-muted sr-only">Add the quality level of product.</small>
+                </div>
+                <div class="form-group">
+                    <label for="sPrice">Selling Price</label>
+                    <input type="number" class="form-control" id="sPrice" step="0.01" aria-describedby="sellingPriceFeildHelp" placeholder="Enter Selling Price" name="sellingPrice" [(ngModel)]="heroProduct.sellingPrice">
+                    <small id="sellingPriceFeildHelp" class="form-text text-muted sr-only">Add the selling price of the product.</small>
+                </div>
+                <div class="form-group">
+                    <label for="pPrice">Purchase Price</label>
+                    <input type="number" class="form-control" id="pPrice" step="0.01" aria-describedby="purchasePriceFeildHelp" placeholder="Enter Purchase Price" name="purchasePrice" [(ngModel)]="heroProduct.purchasePrice">
+                    <small id="purchasePriceFeildHelp" class="form-text text-muted sr-only">Add the purchase price of the code.</small>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">{{productId == 0 ? 'Add' : 'Update'}}</button>
+              </form>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>
