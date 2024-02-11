@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../../model/product';
 import { ProductService } from '../../../services/product-service';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
@@ -31,7 +31,7 @@ export const MY_FORMATS = {
 @Component({
   selector: 'app-product-view',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, CommonModule, RouterOutlet],
+  imports: [FormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, CommonModule, RouterOutlet, ReactiveFormsModule],
   providers: [Location, Router, SnackbarService, ProductService, {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
@@ -50,9 +50,21 @@ export class ProductViewComponent implements OnInit, OnDestroy {
   unsubscribe: Subject<void> = new Subject<void> ();
   bajajProduct: Product = new Product();
   productId: number = 0;
-  constructor(private _location: Location, private _router: Router, private _route: ActivatedRoute, private _product: ProductService, private _snackBarService: SnackbarService) {}
+  bajajForm: any;
   @ViewChild('picker', { static: false }) private picker!: MatDatepicker<Date>;
+  feildEmpty: boolean = false;
 
+  constructor(private _location: Location, private _router: Router, private _route: ActivatedRoute, private _product: ProductService, private _snackBarService: SnackbarService) {
+    this.bajajForm = new FormGroup({
+      productCode: new FormControl('', Validators.required),
+      productName: new FormControl('', Validators.required),
+      manufacturerYear: new FormControl(''),
+      quantity: new FormControl('', Validators.required),
+      qualityLevel: new FormControl('', Validators.required),
+      sellingPrice: new FormControl('', Validators.required),
+      purchasePrice: new FormControl('', Validators.required)
+    })
+  }
 
   ngOnInit() : void {
     this._route.paramMap.subscribe((params) => {
@@ -86,29 +98,49 @@ export class ProductViewComponent implements OnInit, OnDestroy {
   getProductDetails(id: number): void {
     this._product.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((resp : Product) => {
       this.bajajProduct = resp;
+      this.bajajForm = new FormGroup({
+        id : new FormControl(this.bajajProduct.id),
+        productCode: new FormControl(this.bajajProduct.productCode),
+        productName: new FormControl(this.bajajProduct.productName),
+        manufacturerYear: new FormControl(this.bajajProduct.manufacturerYear),
+        quantity: new FormControl(this.bajajProduct.quantity),
+        qualityLevel: new FormControl(this.bajajProduct.qualityLevel),
+        sellingPrice: new FormControl(this.bajajProduct.sellingPrice),
+        purchasePrice: new FormControl(this.bajajProduct.purchasePrice)
+      }); 
     });
   }
 
   updateProduct(bajajProduct: Product): void {
-    this._product.updateProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBarService.getSuccessMessage('Product updated successfully.');
-        this._router.navigateByUrl('bajaj');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product update.');
-      }
-    })
+    if (bajajProduct.productCode && bajajProduct.productName && bajajProduct.quantity && bajajProduct.qualityLevel && bajajProduct.sellingPrice && bajajProduct.purchasePrice) {
+      this._product.updateProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBarService.getSuccessMessage('Product updated successfully.');
+          this._router.navigateByUrl('bajaj');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product update.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
   }
 
   addProduct(bajajProduct: Product): void {
-    this._product.addProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBarService.getSuccessMessage('Product added successfully.');
-        this._router.navigateByUrl('bajaj');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product add.');
-      }
-    })
+    //this.feildEmpty = false;
+    if (bajajProduct.productCode && bajajProduct.productName && bajajProduct.quantity && bajajProduct.qualityLevel && bajajProduct.sellingPrice && bajajProduct.purchasePrice) {
+      this._product.addProduct(bajajProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBarService.getSuccessMessage('Product added successfully.');
+          this._router.navigateByUrl('bajaj');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product add.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
   }
-
 }

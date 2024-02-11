@@ -11,14 +11,20 @@
         <div class="d-flex col-12">
             <form #form="ngForm" class="col-12" (ngSubmit)="productId == 0 ? addProduct(kawasakiProduct) : updateProduct(kawasakiProduct)">
                 <div class="form-group">
-                    <label for="code">Kawasaki Code</label>
-                    <input type="text" class="form-control" id="code" aria-describedby="codeFeildHelp" placeholder="Enter Kawasaki Code" name="productCode" [(ngModel)]="kawasakiProduct.productCode">
+                    <label for="code">Kawasaki Code *</label>
+                    <input type="text" class="form-control" id="code" [class.invalid-input]="(!kawasakiProduct.productCode && feildEmpty)" #kawasakiCodeFeild="ngModel" aria-describedby="codeFeildHelp" placeholder="Enter Kawasaki Code" name="productCode" [(ngModel)]="kawasakiProduct.productCode" required>
                     <small id="codeFeildHelp" class="form-text text-muted sr-only">Add the particular kawasaki code and it should match with standard kawasaki code.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.productCode && (kawasakiCodeFeild.dirty || kawasakiCodeFeild.touched)) || (!kawasakiProduct.productCode && feildEmpty)" class="text-danger">
+                        Please add the Product Code
+                    </mat-error>
                 </div>
                 <div class="form-group">
-                    <label for="product">Product</label>
-                    <input type="text" class="form-control" id="product" aria-describedby="productFeildHelp" placeholder="Enter Product Name" name="productName" [(ngModel)]="kawasakiProduct.productName">
+                    <label for="product">Product *</label>
+                    <input type="text" class="form-control" id="product" [class.invalid-input]="(!kawasakiProduct.productName && feildEmpty)" #kawasakiFeild="ngModel" aria-describedby="productFeildHelp" placeholder="Enter Product Name" name="productName" [(ngModel)]="kawasakiProduct.productName" required>
                     <small id="productFeildHelp" class="form-text text-muted sr-only">Add the particular kawasaki product name.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.productName && (kawasakiFeild.dirty || kawasakiFeild.touched)) || (!kawasakiProduct.productName && feildEmpty)" class="text-danger">
+                        Please add the Product Name
+                    </mat-error>
                 </div>
                 <div class="form-group">
                     <label for="mYear">Manufac. Country</label>
@@ -31,24 +37,36 @@
                     <small id="manufacFeildHelp" class="form-text text-muted sr-only">Add the manufacture year of the product.</small>
                 </div>
                 <div class="form-group">
-                    <label for="qty">Quantity</label>
-                    <input type="number" class="form-control" id="qty" step="1" aria-describedby="quantityFeildHelp" placeholder="Enter Quantity" name="quantity" [(ngModel)]="kawasakiProduct.quantity">
+                    <label for="qty">Quantity *</label>
+                    <input type="number" class="form-control" id="qty" [class.invalid-input]="(!kawasakiProduct.quantity && feildEmpty)" #quantityFeild="ngModel" step="1" aria-describedby="quantityFeildHelp" placeholder="Enter Quantity" name="quantity" [(ngModel)]="kawasakiProduct.quantity" required>
                     <small id="quantityFeildHelp" class="form-text text-muted sr-only">Add the quantity product.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.quantity && (quantityFeild.dirty || quantityFeild.touched)) || (!kawasakiProduct.quantity && feildEmpty)" class="text-danger">
+                        Please add the Quantity
+                    </mat-error>
                 </div>
                 <div class="form-group">
-                    <label for="qlityLevel">Quality Level</label>
-                    <input type="number" class="form-control" id="qlityLevel" step="1" aria-describedby="qualityFeildHelp" placeholder="Enter Quality Level" name="qualityLevel" [(ngModel)]="kawasakiProduct.qualityLevel">
+                    <label for="qlityLevel">Quality Level *</label>
+                    <input type="number" class="form-control" id="qlityLevel" [class.invalid-input]="(!kawasakiProduct.qualityLevel && feildEmpty)" #qualityLevelFeild="ngModel" step="1" aria-describedby="qualityFeildHelp" placeholder="Enter Quality Level" name="qualityLevel" [(ngModel)]="kawasakiProduct.qualityLevel" required>
                     <small id="qualityFeildHelp" class="form-text text-muted sr-only">Add the quality level of product.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.qualityLevel && (qualityLevelFeild.dirty || qualityLevelFeild.touched)) || (!kawasakiProduct.qualityLevel && feildEmpty)" class="text-danger">
+                        Please add the Quality Level
+                    </mat-error>
                 </div>
                 <div class="form-group">
-                    <label for="sPrice">Selling Price</label>
-                    <input type="number" class="form-control" id="sPrice" step="0.01" aria-describedby="sellingPriceFeildHelp" placeholder="Enter Selling Price" name="sellingPrice" [(ngModel)]="kawasakiProduct.sellingPrice">
+                    <label for="sPrice">Selling Price *</label>
+                    <input type="number" class="form-control" id="sPrice" [class.invalid-input]="(!kawasakiProduct.sellingPrice && feildEmpty)" #sellingPriceFeild="ngModel" step="0.01" aria-describedby="sellingPriceFeildHelp" placeholder="Enter Selling Price" name="sellingPrice" [(ngModel)]="kawasakiProduct.sellingPrice" required>
                     <small id="sellingPriceFeildHelp" class="form-text text-muted sr-only">Add the selling price of the product.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.sellingPrice && (sellingPriceFeild.dirty || sellingPriceFeild.touched)) || (!kawasakiProduct.sellingPrice && feildEmpty)" class="text-danger">
+                        Please add the Selling Price
+                    </mat-error>
                 </div>
                 <div class="form-group">
-                    <label for="pPrice">Purchase Price</label>
-                    <input type="number" class="form-control" id="pPrice" step="0.01" aria-describedby="purchasePriceFeildHelp" placeholder="Enter Purchase Price" name="purchasePrice" [(ngModel)]="kawasakiProduct.purchasePrice">
+                    <label for="pPrice">Purchase Price *</label>
+                    <input type="number" class="form-control" id="pPrice" [class.invalid-input]="(!kawasakiProduct.purchasePrice && feildEmpty)" #purchasePriceFeild="ngModel" step="0.01" aria-describedby="purchasePriceFeildHelp" placeholder="Enter Purchase Price" name="purchasePrice" [(ngModel)]="kawasakiProduct.purchasePrice" required>
                     <small id="purchasePriceFeildHelp" class="form-text text-muted sr-only">Add the purchase price of the code.</small>
+                    <mat-error *ngIf="(!kawasakiProduct.purchasePrice && (purchasePriceFeild.dirty || purchasePriceFeild.touched)) || (!kawasakiProduct.purchasePrice && feildEmpty)" class="text-danger">
+                        Please add the Purchase Price
+                    </mat-error>
                 </div>
                 <button type="submit" class="btn btn-primary mt-2">{{productId == 0 ? 'Add' : 'Update'}}</button>
               </form>

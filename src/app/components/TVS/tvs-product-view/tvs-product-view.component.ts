@@ -22,6 +22,7 @@ export class TvsProductViewComponent implements OnInit, OnDestroy{
   productId: number = 0;
   tvsProduct: Product = new Product();
   unsubscribe: Subject<void> = new Subject<void>();
+  feildEmpty: boolean = false;
 
   constructor(private _location: Location, private _router:Router, private _route:ActivatedRoute, private _tvsService:TvsService, private _snackbar:SnackbarService) {}
   
@@ -48,32 +49,52 @@ export class TvsProductViewComponent implements OnInit, OnDestroy{
   }
 
   getProduct(id: number): any {
-    this._tvsService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((response: Product) => {
-      if (response) {
-        this.tvsProduct = response;
-      }
-    });
+    if (id > 0) {
+      this._tvsService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((response: Product) => {
+        if (response) {
+          this.tvsProduct = response;
+        }
+      });
+    } else {
+      this.tvsProduct = new Product();
+      this.tvsProduct.quantity = "";
+      this.tvsProduct.qualityLevel = "";
+      this.tvsProduct.sellingPrice = "";
+      this.tvsProduct.purchasePrice = "";
+    }
   }
 
   updateProduct(tvsProduct: Product): void {
-    this._tvsService.updateProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackbar.getSuccessMessage('Product updated successfully.');
-        this._router.navigateByUrl('/tvs');
-      } else {
-        this._snackbar.getErrorMessage('Error in product update.');
-      }
-    })
+    if (tvsProduct.productCode && tvsProduct.productName && tvsProduct.quantity && tvsProduct.qualityLevel && tvsProduct.sellingPrice && tvsProduct.purchasePrice) {
+      this._tvsService.updateProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackbar.getSuccessMessage('Product updated successfully.');
+          this._router.navigateByUrl('/tvs');
+        } else {
+          this._snackbar.getErrorMessage('Error in product update.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackbar.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
   addProduct(tvsProduct: Product): void {
-    this._tvsService.addProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackbar.getSuccessMessage('Product added successfully.');
-        this._router.navigateByUrl('/tvs');
-      } else {
-        this._snackbar.getErrorMessage('Error in product add.');
-      }
-    })
+    if (tvsProduct.productCode && tvsProduct.productName && tvsProduct.quantity && tvsProduct.qualityLevel && tvsProduct.sellingPrice && tvsProduct.purchasePrice) {
+      this._tvsService.addProduct(tvsProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackbar.getSuccessMessage('Product added successfully.');
+          this._router.navigateByUrl('/tvs');
+        } else {
+          this._snackbar.getErrorMessage('Error in product add.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackbar.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 }

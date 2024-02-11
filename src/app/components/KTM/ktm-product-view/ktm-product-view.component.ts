@@ -22,6 +22,7 @@ export class KtmProductViewComponent implements OnInit, OnDestroy{
   ktmProduct: Product = new Product();
   productId: number = 0;
   unsubscribe: Subject<void> = new Subject<void>();
+  feildEmpty: boolean = false;
 
   constructor(private _snackBarService: SnackbarService, private _ktmService: KtmService, private _route: ActivatedRoute, private _location:Location, private _router: Router) {}
 
@@ -40,11 +41,19 @@ export class KtmProductViewComponent implements OnInit, OnDestroy{
   }
 
   getProduct(id: number): void {
-    this._ktmService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
-      if (res) {
-        this.ktmProduct = res;
-      }
-    });
+    if (id > 0) {
+      this._ktmService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
+        if (res) {
+          this.ktmProduct = res;
+        }
+      });
+    } else {
+      this.ktmProduct = new Product();
+      this.ktmProduct.quantity = '';
+      this.ktmProduct.qualityLevel = '';
+      this.ktmProduct.sellingPrice = '';
+      this.ktmProduct.purchasePrice = '';
+    }
   }
 
   goBack($event: MouseEvent): void {
@@ -56,25 +65,37 @@ export class KtmProductViewComponent implements OnInit, OnDestroy{
   }
 
   addProduct(item: Product): void {
-    this._ktmService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
-      if (res) {
-        this._snackBarService.getSuccessMessage('Product added successfully.');
-        this._router.navigateByUrl('/ktm');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product add.');
-      }
-    });
+    if (item.productCode && item.productName && item.quantity && item.qualityLevel && item.sellingPrice && item.purchasePrice) {
+      this._ktmService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
+        if (res) {
+          this._snackBarService.getSuccessMessage('Product added successfully.');
+          this._router.navigateByUrl('/ktm');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product add.');
+        }
+      });
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
   updateProduct(item: Product): void {
-    this._ktmService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBarService.getSuccessMessage('Product updated successfully.');
-        this._router.navigateByUrl('/ktm');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product update.');
-      }
-    });
+    if (item.productCode && item.productName && item.quantity && item.qualityLevel && item.sellingPrice && item.purchasePrice) {
+      this._ktmService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBarService.getSuccessMessage('Product updated successfully.');
+          this._router.navigateByUrl('/ktm');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product update.');
+        }
+      });
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
 }

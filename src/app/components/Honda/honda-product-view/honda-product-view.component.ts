@@ -22,6 +22,7 @@ export class HondaProductViewComponent implements OnInit, OnDestroy{
   productId: number = 0;
   hondaProduct: Product = new Product();
   unsubscribe: Subject<void> = new Subject<void>();
+  feildEmpty: boolean = false;
 
   constructor(private _location: Location, private _hondaService: HondaService, private _router: Router, private _route: ActivatedRoute, private _snackBar:SnackbarService) {}
 
@@ -40,33 +41,53 @@ export class HondaProductViewComponent implements OnInit, OnDestroy{
   }
 
   getProduct(productId: number): any {
-    this._hondaService.getProduct(productId).pipe(takeUntil(this.unsubscribe)).subscribe((response: Product) => {
-      if (response) {
-         this.hondaProduct = response;
-      }
-    });
+    if (productId > 0) {
+      this._hondaService.getProduct(productId).pipe(takeUntil(this.unsubscribe)).subscribe((response: Product) => {
+        if (response) {
+           this.hondaProduct = response;
+        }
+      });
+    } else {
+      this.hondaProduct = new Product();
+      this.hondaProduct.quantity = '';
+      this.hondaProduct.qualityLevel = '';
+      this.hondaProduct.sellingPrice = '';
+      this.hondaProduct.purchasePrice = '';
+    }
   }
 
   updateProduct(hondaProduct: Product): any {
-    this._hondaService.updateProduct(hondaProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBar.getSuccessMessage('Product updated successfully.');
-        this._router.navigateByUrl('/honda');
-      } else {
-        this._snackBar.getErrorMessage('Error in product update.');
-      }
-    })
+    if (hondaProduct.productCode && hondaProduct.productName && hondaProduct.quantity && hondaProduct.qualityLevel && hondaProduct.sellingPrice && hondaProduct.purchasePrice) {
+      this._hondaService.updateProduct(hondaProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBar.getSuccessMessage('Product updated successfully.');
+          this._router.navigateByUrl('/honda');
+        } else {
+          this._snackBar.getErrorMessage('Error in product update.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackBar.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
   addProduct(hondaProduct: Product): any {
-    this._hondaService.addProduct(hondaProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBar.getSuccessMessage('Product added successfully.');
-        this._router.navigateByUrl('/honda');
-      } else {
-        this._snackBar.getErrorMessage('Error in product update.');
-      }
-    })
+    if (hondaProduct.productCode && hondaProduct.productName && hondaProduct.quantity && hondaProduct.qualityLevel && hondaProduct.sellingPrice && hondaProduct.purchasePrice) {
+      this._hondaService.addProduct(hondaProduct).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBar.getSuccessMessage('Product added successfully.');
+          this._router.navigateByUrl('/honda');
+        } else {
+          this._snackBar.getErrorMessage('Error in product update.');
+        }
+      })
+    } else {
+      this.feildEmpty = true;
+      this._snackBar.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
     
   goBack($event: MouseEvent): void {

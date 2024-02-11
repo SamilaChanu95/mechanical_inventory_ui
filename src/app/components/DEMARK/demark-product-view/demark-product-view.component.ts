@@ -22,6 +22,7 @@ export class DemarkProductViewComponent implements OnInit, OnDestroy{
   demarkProduct: Product = new Product();
   productId: number = 0;
   unsubscribe: Subject<void> = new Subject<void> ();
+  feildEmpty: boolean = false;
 
   constructor(private _snackBarService: SnackbarService, private _demarkService:DemarkService, private _route: ActivatedRoute, private _router: Router, private _location: Location) {}
 
@@ -40,33 +41,53 @@ export class DemarkProductViewComponent implements OnInit, OnDestroy{
   }
 
   addProduct(item: Product): void {
-    this._demarkService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
-      if (res) {
-        this._snackBarService.getSuccessMessage('Product added successfully.');
-        this._router.navigateByUrl('/demark');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product add.');
-      }
-    });
+    if (item.productCode && item.productName && item.quantity && item.qualityLevel && item.sellingPrice && item.purchasePrice) {
+      this._demarkService.addProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((res: boolean) => {
+        if (res) {
+          this._snackBarService.getSuccessMessage('Product added successfully.');
+          this._router.navigateByUrl('/demark');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product add.');
+        }
+      });
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
   updateProduct(item: Product): void {
-    this._demarkService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
-      if (response) {
-        this._snackBarService.getSuccessMessage('Product updated successfully.');
-        this._router.navigateByUrl('/demark');
-      } else {
-        this._snackBarService.getErrorMessage('Error in product update.');
-      }
-    });
+    if (item.productCode && item.productName && item.quantity && item.qualityLevel && item.sellingPrice && item.purchasePrice) {
+      this._demarkService.updateProduct(item).pipe(takeUntil(this.unsubscribe)).subscribe((response: boolean) => {
+        if (response) {
+          this._snackBarService.getSuccessMessage('Product updated successfully.');
+          this._router.navigateByUrl('/demark');
+        } else {
+          this._snackBarService.getErrorMessage('Error in product update.');
+        }
+      });
+    } else {
+      this.feildEmpty = true;
+      this._snackBarService.getErrorMessage('Please fill the all required feilds.');
+    }
+    this.feildEmpty = false;
   }
 
   getProduct(id: number): void {
-    this._demarkService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
-      if (res) {
-        this.demarkProduct = res;
-      }
-    });
+    if (id > 0) {
+      this._demarkService.getProduct(id).pipe(takeUntil(this.unsubscribe)).subscribe((res: Product) => {
+        if (res) {
+          this.demarkProduct = res;
+        }
+      });
+    } else {
+      this.demarkProduct = new Product();
+      this.demarkProduct.quantity = '';
+      this.demarkProduct.qualityLevel = '';
+      this.demarkProduct.sellingPrice = '';
+      this.demarkProduct.purchasePrice = '';
+    }
   }
 
   goBack(event: Event) : void {

@@ -7,10 +7,10 @@ export class Product {
     originCountry: string;
     manufacturerYear: Date;
     packedOn: Date;
-    quantity: number;
-    qualityLevel: number;
-    sellingPrice: number;
-    purchasePrice: number;
+    quantity: string;
+    qualityLevel: string;
+    sellingPrice: string;
+    purchasePrice: string;
 
     constructor(id: number = 0, productCode: string = '', productName: string = '', manufacturerCountry: string = '', originCountry: string = '', manufacturerName: string = '', manufacturerYear: Date = new Date(), packedOn: Date = new Date(), quantity: number = 0, qualityLevel: number = 0, sellingPrice: number = 0, purchasePrice: number = 0) {
         this.id = id,
@@ -21,9 +21,9 @@ export class Product {
         this.manufacturerCountry = manufacturerCountry,
         this.manufacturerYear = manufacturerYear,
         this.packedOn = packedOn,
-        this.quantity = quantity,
-        this.qualityLevel = qualityLevel,
-        this.sellingPrice = sellingPrice,
-        this.purchasePrice = purchasePrice
+        this.quantity = quantity.toString(),
+        this.qualityLevel = qualityLevel.toString(),
+        this.sellingPrice = sellingPrice.toString(),
+        this.purchasePrice = purchasePrice.toString()
     }
 }
