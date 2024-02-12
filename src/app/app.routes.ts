@@ -20,6 +20,7 @@ import { DemarkProductListComponent } from './components/DEMARK/demark-product-l
 import { DemarkProductViewComponent } from './components/DEMARK/demark-product-view/demark-product-view.component';
 import { SuzukiProductListComponent } from './components/Suzuki/suzuki-product-list/suzuki-product-list.component';
 import { SuzukiProductViewComponent } from './components/Suzuki/suzuki-product-view/suzuki-product-view.component';
+import { NotFoundComponent } from './components/NotFound/not-found/not-found.component';
 
 export const routes: Routes = [
     {
@@ -110,5 +111,10 @@ export const routes: Routes = [
     {
         path: 'kawasaki/:id',
         component: KawasakiProductViewComponent
+    },
+    {
+        path: '**',
+        component: NotFoundComponent,
+        title: 'Page Not Found'
     }
 ];
